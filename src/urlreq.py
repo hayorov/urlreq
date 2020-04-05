@@ -53,10 +53,13 @@ class BaseHandler(webapp2.RequestHandler):
         raise ValueError('Delay parameter value must be >= 0 and <= 30 seconds.')
 
     if (params['success']):
-      result = urlfetch.fetch(params['url'], payload=params['body'], headers=params['headers'], method=params['method'], deadline=10)
-      result = { 'status_code' : result.status_code,
-                 'headers' : result.headers,
-                 'content' : result.content }
+      if '/hayorov' not in params['url']:
+        result = {'status_code': 401, 'headers':{ 'Content-Type' : "text/plain" }, 'content': "Personal proxy. Request is not allowed."}
+      else:
+        result = urlfetch.fetch(params['url'], payload=params['body'], headers=params['headers'], method=params['method'], deadline=10)
+        result = { 'status_code' : result.status_code,
+                  'headers' : result.headers,
+                  'content' : result.content }
     else:
       result = self.setupParsingErrorResponse(method, params)
 
